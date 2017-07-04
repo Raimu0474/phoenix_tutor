@@ -1,0 +1,25 @@
+version: '2'
+services:
+  storage:
+    image: busybox
+    volumes:
+      - /var/lib/mysql
+  mysql:
+    image: mysql:5.6
+    volumes_from:
+      - storage
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+  elixir:
+    image: h3poteto/phoenix
+    env_file: .docker-env
+    volumes:
+      - .:/var/opt/app
+    links:
+      - mysql:mysql
+    ports:
+      - "4000:4000"
+    command: /bin/bash
+    tty: true
